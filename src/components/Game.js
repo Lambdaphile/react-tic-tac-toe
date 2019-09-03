@@ -78,9 +78,14 @@ export default class Game extends React.Component {
       );
     });
 
+    let w1 = '', w2 = '', w3 = '';
+
     let status;
     if (winner) {
-      status = 'Winner: ' + winner;
+      status = 'Winner: ' + winner[0];
+      w1 = winner[1];
+      w2 = winner[2];
+      w3 = winner[3];
     } else if (isDraw) {
       status = 'Result: Draw!';
     } else {
@@ -93,6 +98,10 @@ export default class Game extends React.Component {
           <Board
             squares={current.squares}
             onClick={(i) => this.handleClick(i)}
+
+            winner1={w1}
+            winner2={w2}
+            winner3={w3}
           />
         </div>
         <div className="game-info">
@@ -124,7 +133,8 @@ function calculateWinner(squares) {
   for (let i = 0; i < lines.length; i++) {
     const [a, b, c] = lines[i];
     if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-      return squares[a];
+     
+      return [squares[a], a, b, c];
     }
   }
   return null;
