@@ -3,12 +3,14 @@ import Square from './Square';
 
 export default class Board extends React.Component {
   renderSquare(i) {
-    let winner = 'square'
-    if (this.props.winner1 === i || this.props.winner2 === i|| this.props.winner3 === i) {
-      winner = 'square winner';
-    }
+    let className;
+
+    if (this.props.winPosition[0] === i || this.props.winPosition[1] === i || 
+        this.props.winPosition[2] === i) className = 'square winner';
+    else className = 'square';
+
     return <Square 
-             winner={winner}
+             className={className}
              value={this.props.squares[i]}
              onClick={() => this.props.onClick(i)}
            />;

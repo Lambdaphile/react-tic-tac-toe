@@ -8,9 +8,9 @@ export default class Game extends React.Component {
       history: [{
         squares: Array(9).fill(null)
       }],
-      order: 'ascending',
-      stepNumber: 0,
       xIsNext: true,
+      stepNumber: 0,
+      order: 'ascending',
       moveLocation: []
     }
   }
@@ -25,15 +25,13 @@ export default class Game extends React.Component {
     }
 
     squares[i] = this.state.xIsNext ? 'X' : 'O';
-
-    const currentLocation = this.state.moveLocation.slice();
     this.setState({
       history: history.concat([{
         squares: squares
       }]),
-      stepNumber: history.length,
       xIsNext: !this.state.xIsNext,
-      moveLocation: currentLocation.concat(locateMove(i))
+      stepNumber: history.length,
+      moveLocation: this.state.moveLocation.concat(locateMove(i))
     });
   }
 
@@ -52,17 +50,17 @@ export default class Game extends React.Component {
   }
 
   renderMoves(moves) {
-    if (this.state.order === 'ascending') {
-      return <ol>{moves}</ol>
-    }
-    return <ol reversed>{Array.from(moves).reverse()}</ol>
+    if (this.state.order === 'ascending')
+      return <ol>{moves}</ol>;
+
+    return <ol reversed>{Array.from(moves).reverse()}</ol>;
   }
 
   render() {
     const history = this.state.history;
     const current = history[this.state.stepNumber];
 
-    const winner = calculateWinner(current.squares);
+    const winInfo = calculateWinner(current.squares);
     const isDraw = (current.squares.indexOf(null) === -1) ? true : false;
 
     let moves = history.map((step, move) => {
@@ -78,16 +76,13 @@ export default class Game extends React.Component {
       );
     });
 
-    let w1 = '', w2 = '', w3 = '';
-
+    let winPosition = ['', '', ''];
     let status;
-    if (winner) {
-      status = 'Winner: ' + winner[0];
-      w1 = winner[1];
-      w2 = winner[2];
-      w3 = winner[3];
+    if (winInfo) {
+      status = 'WINNER: ' + winInfo.winner;
+      winPosition = winInfo.positions;
     } else if (isDraw) {
-      status = 'Result: Draw!';
+      status = 'DRAW!';
     } else {
       status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
     }
@@ -98,10 +93,7 @@ export default class Game extends React.Component {
           <Board
             squares={current.squares}
             onClick={(i) => this.handleClick(i)}
-
-            winner1={w1}
-            winner2={w2}
-            winner3={w3}
+            winPosition={winPosition}
           />
         </div>
         <div className="game-info">
@@ -134,7 +126,7 @@ function calculateWinner(squares) {
     const [a, b, c] = lines[i];
     if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
      
-      return [squares[a], a, b, c];
+      return { winner: squares[a], positions: [a, b, c] };
     }
   }
   return null;
